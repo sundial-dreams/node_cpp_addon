@@ -1,4 +1,4 @@
-const { findSubStr, subStrCount, BigNumber } = require("./build/Release/addon");
+const { findSubStr, subStrCount, BigNumber } = require("./build/Release/addon02");
 console.log("subStr index is: ", findSubStr("abcabdacac", "cab"));
 console.log("subStr count is: ", subStrCount("abababcda", "ab"));
 

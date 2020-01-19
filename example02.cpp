@@ -5,8 +5,10 @@
 #include <node_object_wrap.h>
 #include "lib/utils.h"
 #include "lib/bigNumber.h"
+
 const int N = 10000;
 using namespace v8;
+
 // 对findSubStr(const char*, const char*)的包装
 void FindSubStr(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
@@ -41,4 +43,4 @@ void Init(Local<Object> exports) {
   BigNumber::Init(exports);
 }
 
-NODE_MODULE(addon, Init)
+NODE_MODULE(addon02, Init)
