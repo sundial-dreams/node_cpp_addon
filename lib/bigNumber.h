@@ -19,6 +19,6 @@ class BigNumber: node::ObjectWrap {
     std::string value; // 用一个std::string 来存
 };
 
-Local<String> MakeString(const char* str);
+Local<String> ToLocalString(const char* str);
 
 #endif //NODE_CPP_ADDON_BIGNUMBER_H

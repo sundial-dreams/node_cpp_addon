@@ -13,7 +13,7 @@ using namespace v8;
 void FindSubStr(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   if (!args[0]->IsString() || !args[1]->IsString()) {
-    isolate->ThrowException(Exception::TypeError(MakeString("type error")));
+    isolate->ThrowException(Exception::TypeError(ToLocalString("type error")));
   }
   // 将Local<String> 转化到 char*类型，下文会介绍
   String::Utf8Value str(isolate, args[0].As<String>());
@@ -26,7 +26,7 @@ void FindSubStr(const FunctionCallbackInfo<Value>& args) {
 void SubStrCount(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   if (!args[0]->IsString() || !args[1]->IsString()) {
-    isolate->ThrowException(Exception::TypeError(MakeString("type error")));
+    isolate->ThrowException(Exception::TypeError(ToLocalString("type error")));
   }
   // 将Local<String> 转化到 char*类型，下文会介绍
   String::Utf8Value str(isolate, args[0].As<String>());

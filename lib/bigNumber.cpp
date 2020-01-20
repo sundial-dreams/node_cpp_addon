@@ -2,9 +2,11 @@
 #include <stack>
 #include <string>
 #include <algorithm>
+#include <node.h>
+#include <node_object_wrap.h>
 #include "bigNumber.h"
 
-Local<String> MakeString(const char* str) {
+Local<String> ToLocalString(const char* str) {
   Isolate* isolate = Isolate::GetCurrent();
   EscapableHandleScope scope(isolate);
   Local<String> s = String::NewFromUtf8(isolate, str, NewStringType::kNormal).ToLocalChecked();
@@ -83,14 +85,14 @@ void BigNumber::Init(Local<Object> exports) {
   dataTemplate->SetInternalFieldCount(1);
   Local<Object> data = dataTemplate->NewInstance(context).ToLocalChecked();
   Local<FunctionTemplate> fnTemplate = FunctionTemplate::New(isolate, New, data);
-  fnTemplate->SetClassName(MakeString("BigNumber"));
+  fnTemplate->SetClassName(ToLocalString("BigNumber"));
   fnTemplate->InstanceTemplate()->SetInternalFieldCount(1);
   NODE_SET_PROTOTYPE_METHOD(fnTemplate, "add", Add);
   NODE_SET_PROTOTYPE_METHOD(fnTemplate, "multiply", Multiply);
   NODE_SET_PROTOTYPE_METHOD(fnTemplate, "val", Val);
   Local<Function> constructor = fnTemplate->GetFunction(context).ToLocalChecked();
   data->SetInternalField(0, constructor);
-  exports->Set(context, MakeString("BigNumber"), constructor).FromJust();
+  exports->Set(context, ToLocalString("BigNumber"), constructor).FromJust();
 }
 
 void BigNumber::New(const FunctionCallbackInfo<Value>& args) {
@@ -118,28 +120,28 @@ void BigNumber::Add(const FunctionCallbackInfo<Value>& args) {
     Local<String> val = args[0].As<String>();
     std::string other(ToCString(val));
     NativeAdd(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
   if (args[0]->IsNumber()) {
     int number = int(args[0].As<Number>()->NumberValue(context).FromJust());
     std::string other = std::to_string(number);
     NativeAdd(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
   if (args[0]->IsObject()) {
     Local<Object> object = args[0].As<Object>();
-    Local<Function> getVal = object->Get(context, MakeString("val")).ToLocalChecked().As<Function>();
+    Local<Function> getVal = object->Get(context, ToLocalString("val")).ToLocalChecked().As<Function>();
     Local<Value> e;
     Local<String> val = getVal->Call(context, args.Holder(), 0, &e).ToLocalChecked().As<String>();
     std::string other(ToCString(val));
     NativeAdd(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
 
-  isolate->ThrowException(Exception::TypeError(MakeString("Type error")));
+  isolate->ThrowException(Exception::TypeError(ToLocalString("Type error")));
 }
 
 void BigNumber::Multiply(const FunctionCallbackInfo<Value>& args) {
@@ -150,31 +152,31 @@ void BigNumber::Multiply(const FunctionCallbackInfo<Value>& args) {
     Local<String> str = args[0].As<String>();
     std::string other(ToCString(str));
     NativeMultiply(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
   if (args[0]->IsNumber()) {
     int number = int (args[0].As<Number>()->NumberValue(context).FromJust());
     std::string other = std::to_string(number);
     NativeMultiply(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
   if (args[0]->IsObject()) {
     Local<Object> obj = args[0].As<Object>();
-    Local<Function> getVal = obj->Get(context, MakeString("val")).ToLocalChecked().As<Function>();
+    Local<Function> getVal = obj->Get(context, ToLocalString("val")).ToLocalChecked().As<Function>();
     Local<Value> e;
     Local<String> str = getVal->Call(context, args.Holder(), 0, &e).ToLocalChecked().As<String>();
     std::string other(ToCString(str));
     NativeMultiply(bigNumber->value, other);
-    args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+    args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
     return;
   }
-  isolate->ThrowException(Exception::TypeError(MakeString("Type error")));
+  isolate->ThrowException(Exception::TypeError(ToLocalString("Type error")));
 }
 
 void BigNumber::Val(const FunctionCallbackInfo<Value>& args) {
   Isolate* isolate = args.GetIsolate();
   auto bigNumber = node::ObjectWrap::Unwrap<BigNumber>(args.Holder());
-  args.GetReturnValue().Set(MakeString(bigNumber->value.c_str()));
+  args.GetReturnValue().Set(ToLocalString(bigNumber->value.c_str()));
 }
